@@ -1,5 +1,10 @@
 name: CI
 on: [push, pull_request]
+
+permissions:
+  contents: read
+  id-token: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -22,3 +27,9 @@ jobs:
           bundler-cache: true # Run "bundle install", and cache the result automatically.
       - name: Run Rake
         run: bundle exec rake
+      - name: Upload coverage to Qlty
+        uses: qltysh/qlty-action/coverage@v2
+        if: success()
+        with:
+          oidc: true
+          files: coverage/lcov/httparty.lcov

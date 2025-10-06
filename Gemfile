@@ -16,6 +16,7 @@ group :test do
   gem 'rexml'
   gem 'rspec',    '~> 3.4'
   gem 'simplecov', require: false
+  gem 'simplecov-lcov', require: false
   gem 'aruba'
   gem 'cucumber', '~> 2.3'
   gem 'webmock'
