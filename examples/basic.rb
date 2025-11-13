@@ -13,6 +13,12 @@ puts response.body, response.code, response.message, response.headers.inspect
 class Partay
   include HTTParty
   base_uri 'http://localhost:3000'
+
+  def test_method
+    if true
+      puts "hello"
+      end
+  end
 end
 
 options = {
