@@ -3,6 +3,10 @@ on: [push, pull_request]
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      # Set at the job level so the coverage step's `if` can check for its presence.
+      # Not available on pull requests from forks, where the upload is skipped.
+      QLTY_COVERAGE_TOKEN: ${{ secrets.QLTY_COVERAGE_TOKEN }}
     strategy:
       matrix:
         ruby:
@@ -22,3 +26,13 @@ jobs:
           bundler-cache: true # Run "bundle install", and cache the result automatically.
       - name: Run Rake
         run: bundle exec rake
+      # SimpleCov (started in spec/spec_helper.rb) writes coverage/.resultset.json
+      # during the rspec task. Publish it from a single representative Ruby
+      # version, since every matrix leg exercises the same suite and code.
+      - name: Upload coverage to Qlty
+        if: ${{ matrix.ruby == 3.4 && env.QLTY_COVERAGE_TOKEN != '' }}
+        uses: qltysh/qlty-action/coverage@v2
+        with:
+          token: ${{ secrets.QLTY_COVERAGE_TOKEN }}
+          files: coverage/.resultset.json
+          format: simplecov
