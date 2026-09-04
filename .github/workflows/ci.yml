@@ -22,3 +22,12 @@ jobs:
           bundler-cache: true # Run "bundle install", and cache the result automatically.
       - name: Run Rake
         run: bundle exec rake
+      - name: Upload coverage to Qlty
+        # SimpleCov (see spec/spec_helper.rb) writes coverage/.resultset.json.
+        # The suite is identical across the Ruby matrix, so publish once.
+        if: matrix.ruby == '3.4'
+        uses: qltysh/qlty-action/coverage@v2
+        with:
+          token: ${{ secrets.QLTY_COVERAGE_TOKEN }}
+          files: coverage/.resultset.json
+          format: simplecov
